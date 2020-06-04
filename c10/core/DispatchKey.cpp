@@ -54,6 +54,8 @@ const char* toString(DispatchKey t) {
       return "Profile";
     case DispatchKey::Named:
       return "Named";
+    case DispatchKey::Meta:
+      return "Meta";
     default:
       return "UNKNOWN_TENSOR_TYPE_ID";
   }
