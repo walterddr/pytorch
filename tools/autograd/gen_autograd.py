@@ -57,12 +57,16 @@ VIEW_FUNCTIONS = {
     '_values': 'self',
     'indices': 'self',
     'values': 'self',
+    'view_as_real': 'self',
+    'view_as_complex': 'self',
     # sparse_coo ctor output should really be views of both indices and values,
     # but we only supports making as view of a single variable, and indices is
     # discrete anyways.
     # FIXME: clone indices on construction.
     'sparse_coo_tensor_with_dims_and_tensors': 'values',
 }
+
+VIEW_FUNCTIONS_WITH_METADATA_CHANGE = ['view_as_real', 'view_as_complex']
 
 # note: some VIEW_FUNCTIONS are just compositions of the view functions above
 # this list contains both the root view functions and any that are purely composed

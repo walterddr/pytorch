@@ -1502,6 +1502,21 @@ class TestAutograd(TestCase):
         gradcheck(func, [x])
         gradgradcheck(func, [x])
 
+    def test_real_imag(self):
+        def real(x):
+            return x.real.sum()
+
+        def imag(x):
+            return x.imag.sum()
+
+        x = torch.randn(10, dtype=torch.cdouble, requires_grad=True)
+        real(x).backward()
+        self.assertEqual(x.grad, torch.ones_like(x))
+
+        y = torch.randn(10, dtype=torch.cdouble, requires_grad=True)
+        imag(y).backward()
+        self.assertEqual(y.grad, torch.ones_like(x)*(-1j))
+
     def test_stack(self):
         x = torch.randn(10, 10, requires_grad=True)
         y = torch.randn(10, 10, requires_grad=True)
