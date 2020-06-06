@@ -751,7 +751,33 @@ graph(%input, %weight):
             else:
                 m = torch.jit.script(M())
             m = prepare_script(m.eval(), {'': default_qconfig})
-            assert len(attrs_with_prefix(m, '_observer_',)) == 3
+            assert len(attrs_with_prefix(m, '_observer_')) == 3
+
+    def test_insert_observers_for_if_observed_before(self):
+        """ test case for values observed before if nodes
+        """
+        class M(torch.nn.Module):
+            def __init__(self, cond):
+                super(M, self).__init__()
+                self.conv = torch.nn.Conv2d(3, 3, 3).float()
+                self.cond = cond
+
+            def forward(self, x):
+                x = self.conv(x)
+                # x is already observed
+                if self.cond:
+                    x = torch.flatten(x)
+                return x
+
+        data = torch.rand((1, 3, 5, 5), dtype=torch.float)
+        for cond in [True, False]:
+            for tracing in [True, False]:
+                if tracing:
+                    m = torch.jit.trace(M(cond), data)
+                else:
+                    m = torch.jit.script(M(cond))
+                m = prepare_script(m, {'': default_qconfig})
+                assert len(attrs_with_prefix(m, '_observer_')) == 2
 
     def test_insert_quant_dequant(self):
         class M(torch.nn.Module):
