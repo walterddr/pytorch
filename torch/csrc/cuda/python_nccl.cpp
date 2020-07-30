@@ -12,8 +12,6 @@
 
 #include <c10/cuda/CUDAGuard.h>
 
-#include <nccl.h>
-
 #include <sstream>
 #include <unordered_map>
 

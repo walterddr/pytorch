@@ -9,6 +9,8 @@
 
 #include <THC/THC.h>
 
+#include <nccl.h>
+
 #include <limits>
 #include <sstream>
 #include <type_traits>
