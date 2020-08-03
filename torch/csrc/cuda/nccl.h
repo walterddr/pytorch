@@ -13,9 +13,11 @@ namespace torch {
 namespace cuda {
 namespace nccl {
 
-// The following are copied from <nccl.h> and redefined in torch::cuda::nccl namespace
+/* The following are copied from <nccl.h> and redefined in torch::cuda::nccl namespace */
+/* pytorch should only use the following definition within pytorch scope */
 
-/* Opaque handle to communicator to ncclComm* */
+
+/* Opaque handle to communicator to ncclComm*, this reinterpret as ncclComm in nccl.cpp */
 typedef void* ncclComm_t;
 
 #define NCCL_UNIQUE_ID_BYTES 128
@@ -62,21 +64,6 @@ static inline void NCCL_CHECK(ncclResult_t status) {
   }
 }
 
-struct AutoNcclGroup {
-  AutoNcclGroup() {
-    (c10::cuda::CUDACachingAllocator::getFreeMutex())->lock();
-#if defined(NCCL_MAJOR) && (NCCL_MAJOR >= 2)
-    NCCL_CHECK(ncclGroupStart());
-#endif
-  }
-  ~AutoNcclGroup() {
-#if defined(NCCL_MAJOR) && (NCCL_MAJOR >= 2)
-    NCCL_CHECK(ncclGroupEnd());
-#endif
-    (c10::cuda::CUDACachingAllocator::getFreeMutex())->unlock();
-  }
-};
-
 TORCH_CUDA_API at::ArrayRef<ncclComm_t> get_communicators(at::TensorList inputs);
 TORCH_CUDA_API void check_inputs(
     at::TensorList inputs,
@@ -89,7 +76,6 @@ TORCH_CUDA_API void check_inputs(
     int root,
     int input_multiplier,
     int output_multiplier);
-TORCH_CUDA_API ncclDataType_t get_data_type(const at::Tensor& t);
 
 } // namespace detail
 
