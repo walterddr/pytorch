@@ -807,6 +807,13 @@ class TestCase(expecttest.TestCase):
     # TODO: provide a better mechanism for generated tests to set rtol/atol.
     _precision: float = 0
 
+    # NOTE: mark if test suite should stop on first failure
+    _fail_fast = False
+
+    @property
+    def fail_fast(self) -> bool:
+        return self._fail_fast
+
     @property
     def precision(self) -> float:
         return self._precision

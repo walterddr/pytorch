@@ -190,6 +190,11 @@ class DeviceTypeTestBase(TestCase):
     # Precision is a thread-local setting since it may be overridden per test
     _tls = threading.local()
     _tls.precision = TestCase._precision
+    _fail_fast = TestCase._fail_fast
+
+    @property
+    def fail_fast(self):
+        return self._fail_fast
 
     @property
     def precision(self):
@@ -274,6 +279,9 @@ class DeviceTypeTestBase(TestCase):
                 finally:
                     self.precision = guard_precision
 
+                if self.fail_fast:
+                    result.failfast = True
+
                 return result
 
             assert not hasattr(cls, test_name), "Redefinition of test {0}".format(test_name)
@@ -322,6 +330,7 @@ class CUDATestBase(DeviceTypeTestBase):
     device_type = 'cuda'
     _do_cuda_memory_leak_check = True
     _do_cuda_non_default_stream = True
+    fail_fast = True
     primary_device: ClassVar[str]
     cudnn_version: ClassVar[Any]
     no_magma: ClassVar[bool]
