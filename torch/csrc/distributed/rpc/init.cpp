@@ -682,7 +682,9 @@ PyObject* rpc_init(PyObject* _unused, PyObject* noargs) {
           "_set_reverse_device_maps",
           // intentionally not releasing GIL to avoid unnecessary context switch
           &TensorPipeAgent::setReverseDeviceMaps);
-
+#else // USE_TENSORPIPE
+  module.attr("_DEFAULT_NUM_WORKER_THREADS") =
+      py::cast(-1);
 #endif // USE_TENSORPIPE
 
   module.def("_is_current_rpc_agent_set", &RpcAgent::isCurrentRpcAgentSet);
